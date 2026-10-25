@@ -117,6 +117,7 @@ import com.eteks.sweethome3d.tools.OperatingSystem;
 import com.eteks.sweethome3d.tools.ResourceURLContent;
 import com.eteks.sweethome3d.viewcontroller.FurnitureController;
 import com.eteks.sweethome3d.viewcontroller.View;
+import com.lowagie.text.Table;
 
 /**
  * A table displaying home furniture.
@@ -724,9 +725,18 @@ public class FurnitureTable extends JTable implements View, Printable {
   }
 
   /**
-   * Prints this component to make it fill <code>pageFormat</code> imageable size.
+   * Prints the furniture table using the default settings
+   * without adding the Level column
    */
   public int print(Graphics g, PageFormat pageFormat, int pageIndex) throws PrinterException {
+    return print(g, pageFormat, pageIndex, false);
+  }
+
+  /**
+   * Prints this component to make it fill <code>pageFormat</code> imageable size.
+   */
+  public int print(Graphics g, PageFormat pageFormat,
+                   int pageIndex, boolean includeLevelColumn) throws PrinterException {
     // Create a printable column model from the column model of this table 
     // with printable renderers for each column
     DefaultTableColumnModel printableColumnModel = new DefaultTableColumnModel();
@@ -750,8 +760,33 @@ public class FurnitureTable extends JTable implements View, Printable {
           return headerRendererLabel;
         }
       };
-    for (int columnIndex = 0, n = columnModel.getColumnCount(); columnIndex < n; columnIndex++) {
-      final TableColumn tableColumn = columnModel.getColumn(columnIndex);
+    //for (int columnIndex = 0, n = columnModel.getColumnCount(); columnIndex < n; columnIndex++) {
+    //  final TableColumn tableColumn = columnModel.getColumn(columnIndex);
+      List<TableColumn> columnsToPrint = new ArrayList<TableColumn>();
+
+      for (int i = 0; i < columnModel.getColumnCount(); i++) {
+        columnsToPrint.add(columnModel.getColumn(i));
+      }
+
+      if (includeLevelColumn) {
+        boolean hasLevel = false;
+
+        for (TableColumn column : columnsToPrint) {
+          if (HomePieceOfFurniture.SortableProperty.LEVEL.equals(
+                  column.getIdentifier())) {
+            hasLevel = true;
+            break;
+          }
+        }
+
+        if (!hasLevel) {
+          TableColumn levelColumn = ((FurnitureTableColumnModel) columnModel).availableColumns.get(
+                  HomePieceOfFurniture.SortableProperty.LEVEL);
+          columnsToPrint.add(levelColumn);
+        }
+      }
+
+      for (final TableColumn tableColumn : columnsToPrint) {
       // Create a printable column from existing table column
       TableColumn printableColumn = new TableColumn();
       printableColumn.setIdentifier(tableColumn.getIdentifier());

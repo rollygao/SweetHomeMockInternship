@@ -2004,7 +2004,7 @@ public class PlanComponent extends JComponent implements PlanView, Scrollable, P
   }
 
   /**
-   * helper function printSelectedLevel()
+   * Prints each viewable level of the home and restores 0the originally selected level after printing.
    */
   public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
     // Create a empty list to store viewable levels

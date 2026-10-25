@@ -346,24 +346,32 @@ public class HomePrintableComponent extends JComponent implements Printable {
     if (furnitureView != null 
         && (homePrint == null || homePrint.isFurniturePrinted())) {
 
+      // Check whether the furnitureview is a FurnitureTable
       if (furnitureView instanceof FurnitureTable) {
         final FurnitureTable furnitureTable = (FurnitureTable) furnitureView;
+        // Save the original furniture filter
         final FurnitureTable.FurnitureFilter oldFilter = furnitureTable.getFurnitureFilter();
 
         try {
+          // Temporarily filter furniture to include all viewable levels
           furnitureTable.setFurnitureFilter(new FurnitureTable.FurnitureFilter() {
                                               @Override
                                               public boolean include(Home home, HomePieceOfFurniture piece) {
+                                                // Preserve the original filter and exclude furniture on
+                                                // non-viewable levels
                                                 return (oldFilter == null || oldFilter.include(home, piece)) &&
                                                         (piece.getLevel() == null || piece.getLevel().isViewable());
                                               }
                                             });
+          // Print the furniture table
           pageExists = furnitureTable.print(g2D, pageFormat, page, true);
         } finally {
+          // Restore the original filter after printing
           furnitureTable.setFurnitureFilter(oldFilter);
         }
 
       } else {
+        // Use the original printing for other furnitureviews
         pageExists = ((Printable) furnitureView).print(g2D, pageFormat, page);
       }
 

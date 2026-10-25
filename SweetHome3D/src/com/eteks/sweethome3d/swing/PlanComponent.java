@@ -2007,7 +2007,7 @@ public class PlanComponent extends JComponent implements PlanView, Scrollable, P
    * Prints each viewable level of the home and restores 0the originally selected level after printing.
    */
   public int print(Graphics g, PageFormat pageFormat, int pageIndex) {
-    // Create a empty list to store viewable levels
+    // Create an empty list to store viewable levels
     List<Level> levels = new ArrayList<Level>();
 
     // Go through every level in the home
@@ -2017,7 +2017,7 @@ public class PlanComponent extends JComponent implements PlanView, Scrollable, P
       }
     }
 
-    // Handle the case where no viewable level exist
+    // The case where no viewable level exist
     if (levels.isEmpty()) {
       if (this.home.getLevels().isEmpty()) {
         return printSelectedLevel(g, pageFormat, pageIndex);
